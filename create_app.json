@@ -19,7 +19,7 @@
               "attributes": {
                 "annotation": "",
                 "exceptionTag": "",
-                "floodOnEncap": "disabled",
+                "floodOnEncap": "enabled",
                 "fwdCtrl": "",
                 "hasMcastSource": "no",
                 "isAttrBasedEPg": "no",
