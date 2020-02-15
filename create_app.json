@@ -1,0 +1,58 @@
+{
+  "totalCount": "1",
+  "imdata": [
+    {
+      "fvAp": {
+        "attributes": {
+          "annotation": "",
+          "descr": "",
+          "dn": "uni/tn-{{tenant}}/ap-{{app_profile}}",
+          "name": "{{app_profile}}",
+          "nameAlias": "",
+          "ownerKey": "",
+          "ownerTag": "",
+          "prio": "unspecified"
+        },
+        "children": [
+          {
+            "fvAEPg": {
+              "attributes": {
+                "annotation": "",
+                "exceptionTag": "",
+                "floodOnEncap": "disabled",
+                "fwdCtrl": "",
+                "hasMcastSource": "no",
+                "isAttrBasedEPg": "no",
+                "matchT": "AtleastOne",
+                "name": "{{epg}}",
+                "nameAlias": "",
+                "pcEnfPref": "unenforced",
+                "prefGrMemb": "exclude",
+                "prio": "unspecified",
+                "shutdown": "no"
+              },
+              "children": [
+                {
+                  "fvRsCustQosPol": {
+                    "attributes": {
+                      "annotation": "",
+                      "tnQosCustomPolName": ""
+                    }
+                  }
+                },
+                {
+                  "fvRsBd": {
+                    "attributes": {
+                      "annotation": "",
+                      "tnFvBDName": "{{bd}}"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

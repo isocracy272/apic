@@ -1,0 +1,19 @@
+{
+  "fvBD":{
+    "attributes":{
+      "dn":"uni/tn-{{tenant}}/BD-{{bd}}",
+      "mac":"00:22:BD:F8:19:FF",
+      "name":"{{bd}}",
+      "rn":"BD-{{bd}}",
+      "status":"created"},
+      "children":[{
+        "fvRsCtx":{
+          "attributes":{
+            "tnFvCtxName":"{{vrf}}",
+            "status":"created,modified"
+          },
+        "children":[]
+      }
+    }]
+  }
+}
