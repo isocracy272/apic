@@ -2,18 +2,36 @@ import xlrd
 import xlwt
 
 #Open the logs workbook
-xl_workbook = xlrd.open_workbook(logs.xlsx)
-xl_sheet = xl_workbook.sheet_by_name('logs')
+logWorkbook = xlrd.open_workbook(logs.xlsx)
+logSheet = logWorkbook.sheet_by_name('logs')
 
 #Start at the top of the logs
-logR= 1
+logR = 1
 
-#match variables for 
+#Define number of rows in logs
+numLogRows = logSheet.nrows
+
+#Open the network workbook
+netWorkbook = xlrd.open_workbook(Network.xlsx)
+netSheet = netWorkbook.sheet_by_name('Networks')
+
+#Start at the top of the Networks
+netR = 1
+
+#Define number of rows in Networks
+numNetRows = netSheet.nrows
+
+#define match variables 
 srcNetM = 0
 dstNetM = 0
 
-#Iterate through logs and find network
-while srcNetM and dstNetM:
+#Iterate through firewall logs
+while logR != numLogRows:
+
+	#Find network match for source address
+	while srcNetM = 0:
+	
+
 	logR = logR + 1
 
 
