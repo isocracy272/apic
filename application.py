@@ -1,6 +1,10 @@
 import xlrd
 import xlwt
 
+#Open the logs workbook
+xl_workbook = xlrd.open_workbook(logs.xlsx)
+xl_sheet = xl_workbook.sheet_by_name('logs')
+
 #Start at the top of the logs
 logR= 1
 
