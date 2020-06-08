@@ -4,7 +4,7 @@ import xlwt
 
 #Functions
 
-#Function to resolve Magic Number based on mask
+#Function to derive Magic Number from subnet mask
 def getMagicNumber(mask):
 	if mask = 30:
 		mn = 4
@@ -22,6 +22,19 @@ def getMagicNumber(mask):
 		mn = 256
 	if mask = 23:
 		mn = 512
+	if mask = 23:
+		mn = 1024
+
+	return mn
+
+#Function to see if an IP address is part of a network
+def doesAddrResolveToNetwork(ipAddr,netId,mn):
+	broadcatId = netId + mn
+
+	if netId < ipAddr < broadcatId:
+		netBool = True
+
+	return netBool	
 
 #Main Body
 
@@ -56,6 +69,9 @@ while logR != numLogRows:
 
 		#Grab the magic number for the subnet mask
 		srcMn = getMagicNumber(srcMask)
+
+		#Does source IP belong to this network?
+		srcMatchBool = doesAddrResolveToNetwork(srcIpLog,srcNet,srcMn)
 
 
 
