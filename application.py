@@ -37,14 +37,39 @@ def doesAddrResolveToNetwork(ipAddr,netId,mn):
 
 	return netBool	
 
-#Detect duplicate ACI Contract
+#Function to detect duplicate ACI Contract
 def detectDuplicateContract(srcNet,dstNet,dstPort):
-	pass
+	#Open the contracts spreadsheet
+	conWorkbook = xlrd.open_workbook("logs.xlsx")
+	conSheet = conWorkbook.sheet_by_name('Contracts')
 
-#Main Body
+	#Start at the top of Contracts
+	conR = 1
+
+	#Define number of rows in Contracts
+	numConRows = conSheet.nrows
+
+	#Define duplicate Bool to return
+	dupBool = False
+
+	while conR != numConRows and dupBool != True:
+
+		#define log vars
+		srcNetEx = conSheet(conR,0)
+		dstNetEx = conSheet(conR,1)
+		dstPortEx = conSheet(conR,2)
+
+		if srcNet == srcNetEx and dstNet == dstNetEx and dstPort == dstPortEx:
+			dupBool = True
+		
+		conR = conR + 1
+
+	return dupBool
+
+#Main Body - Analyse
 
 #Open the logs workbook
-logWorkbook = xlrd.open_workbook(logs.xlsx)
+logWorkbook = xlrd.open_workbook("logs.xlsx")
 logSheet = logWorkbook.sheet_by_name('logs')
 
 #Start at the top of the logs
@@ -54,7 +79,7 @@ logR = 1
 numLogRows = logSheet.nrows
 
 #Open the network workbook
-netWorkbook = xlrd.open_workbook(Network.xlsx)
+netWorkbook = xlrd.open_workbook("Network.xlsx")
 netSheet = netWorkbook.sheet_by_name('Networks')
 
 #Start at the top of the Networks
@@ -65,6 +90,19 @@ netStop = 0
 
 #Define number of rows in Networks
 numNetRows = netSheet.nrows
+
+#Open the contracts spreadsheet
+conWorkbook = xlwt.workbook("logs.xlsx")
+conSheet = conWorkbook.add_sheet('Contracts')
+
+#Save contracts spreadsheet
+conWorkbook.save
+
+#Start at the top of Contracts
+conR = 1
+
+#Define number of rows in Contracts
+numConRows = conSheet.nrows
 
 #Iterate through firewall logs
 while logR != numLogRows:
@@ -127,11 +165,16 @@ while logR != numLogRows:
 	#Detect duplicate ACI Contract
 	logDup = detectDuplicateContract(srcNet,dstNet,dstPort)
 
+	#Write contract to contract spreadsheet
 
+	#Main Body - Configure
 
 
 	logR = logR + 1
 
+#Close Spreadsheets
+netWorkbook.close()
+logWorkbook.close()
 
 
 #ToTheEdge
