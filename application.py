@@ -40,7 +40,7 @@ def doesAddrResolveToNetwork(ipAddr,netId,mn):
 #Function to detect duplicate ACI Contract
 def detectDuplicateContract(srcNet,dstNet,dstPort):
 	#Open the contracts spreadsheet
-	conWorkbook = xlrd.open_workbook("logs.xlsx")
+	conWorkbook = xlrd.open_workbook("Contracts.csv")
 	conSheet = conWorkbook.sheet_by_name('Contracts')
 
 	#Start at the top of Contracts
@@ -92,17 +92,19 @@ netStop = 0
 numNetRows = netSheet.nrows
 
 #Open the contracts spreadsheet
-conWorkbook = xlwt.workbook("logs.xlsx")
+conWorkbook = xlwt.workbook("Contracts.csv")
 conSheet = conWorkbook.add_sheet('Contracts')
+
+#Add Column headings to Contracts
+conSheet.write(0, 0, 'Source Network')
+conSheet.write(0, 1, 'Destination Network')
+conSheet.write(0, 2, 'Destination Port')
 
 #Save contracts spreadsheet
 conWorkbook.save
 
 #Start at the top of Contracts
 conR = 1
-
-#Define number of rows in Contracts
-numConRows = conSheet.nrows
 
 #Iterate through firewall logs
 while logR != numLogRows:
@@ -165,16 +167,46 @@ while logR != numLogRows:
 	#Detect duplicate ACI Contract
 	logDup = detectDuplicateContract(srcNet,dstNet,dstPort)
 
-	#Write contract to contract spreadsheet
-
-	#Main Body - Configure
-
+	#Write contract to contract spreadsheet if it is not a duplicate
+	if logDup == False:
+		conSheet.write(conR, 0, srcNet)
+		conSheet.write(conR, 1, dstNet)
+		conSheet.write(conR, 2, dstPort)
+		
+		conR = conR + 1
 
 	logR = logR + 1
+
+#Main Body - Configure
+
+#Open Contract spreadsheet
+conWorkbook = xlrd.open_workbook("Contracts.csv")
+conSheet = conWorkbook.sheet_by_name('Contracts')
+
+#Start back at the top of the contract spreadsheet
+conR = 1
+
+#Define number of rows in Contracts
+numConRows = conSheet.nrows
+
+#Iterate through Contracts and create Configuration
+while conR != numConRows:
+	conSrcNet = conSheet(conR,0)
+	conDstNet = conSheet(conR,1)
+	conPort = conSheet(conR,2)
+
+	conSrcArray = getNetworkConfig(conSrcNet)
+	conDstArray = getNetworkConfig(conDstNet)
+
+
+#Push Configuration to APIC
 
 #Close Spreadsheets
 netWorkbook.close()
 logWorkbook.close()
+
+#Save Contract Spreadsheet
+conWorkbook.save
 
 
 #ToTheEdge
