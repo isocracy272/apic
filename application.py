@@ -208,5 +208,10 @@ logWorkbook.close()
 #Save Contract Spreadsheet
 conWorkbook.save
 
+while :
+	pass
+
+
+
 
 #ToTheEdge
