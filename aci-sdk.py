@@ -1,6 +1,7 @@
 #imports
 import xlrd
 import json
+import requests
 
 #functions
 
@@ -24,7 +25,6 @@ def dumpJsonToFile(jsonObj,fileName):
 	f = open(fileName, "w")
 	f.write(jsonObj)
 	f.close()
-
 
 #Create new BD
 def createBd(app,tier,environment,tenant,vrf,gateway):
@@ -51,6 +51,29 @@ def createBd(app,tier,environment,tenant,vrf,gateway):
 	}
 
 	return bdJson
+
+#Login to APIC
+def getCredentialsJson():
+	login = {
+	  "aaaUser": {
+	    "attributes": {
+	      "name": "admin",
+	      "pwd": "ciscopsdt"
+	    }
+	  }
+	}
+
+	return login
+
+#Push to API
+def pushJsonToApi():
+	login = getCredentialsJson()
+	login = convertPythonToJson(login)
+
+	url = "https://sandboxapicdc.cisco.com"
+	resp  = requests.post(url=url,json=login)
+
+	return resp
 
 #Create new EPG
 
@@ -100,6 +123,10 @@ bdJson = convertPythonToJson(bdJson)
 fileName = "bd.json"
 dumpJsonToFile(bdJson,fileName)
 
+#resp = pushJsonToApi()
+#print(resp.status_code)
+#print(resp.text)
+
 #Open policy
 polWorkbook = xlrd.open_workbook("policy.xlsx")
 polSheet = polWorkbook.sheet_by_name('policy')
@@ -111,13 +138,6 @@ polR = 1
 numpolRows = polSheet.nrows
 
 #create policy
-
-#Xlrd Tests
-#app = appsSheet.cell(1,0)
-#print app
-
-#source = polSheet.cell(1,0)
-#print source
 
 #push to apic
 
