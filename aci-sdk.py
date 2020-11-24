@@ -13,6 +13,19 @@ def formatText(text):
 
 	return text
 
+#Convert Python to JSON and pretty print
+def convertPythonToJson(pythonObj):
+	jsonObj = json.dumps(pythonObj, sort_keys=True, indent=4)
+	
+	return jsonObj
+
+#Dump Json into file
+def dumpJsonToFile(jsonObj,fileName):
+	f = open(fileName, "w")
+	f.write(jsonObj)
+	f.close()
+
+
 #Create new BD
 def createBd(app,tier,environment,tenant,vrf,gateway):
 	bdName = environment + "-" + app + "-" + tier
@@ -81,12 +94,11 @@ vrf = formatText(vrf)
 bdJson = createBd(app,tier,environment,tenant,vrf,gateway)
 
 #pretty printing and convert from Python Dict into JSON
-bdJson = json.dumps(bdJson, sort_keys=True, indent=4)
+bdJson = convertPythonToJson(bdJson)
 
 #dump Json into file
-f = open("bd.json", "w")
-f.write(bdJson)
-f.close()
+fileName = "bd.json"
+dumpJsonToFile(bdJson,fileName)
 
 #Open policy
 polWorkbook = xlrd.open_workbook("policy.xlsx")
