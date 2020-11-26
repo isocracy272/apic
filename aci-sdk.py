@@ -22,7 +22,7 @@ def convertPythonToJson(pythonObj):
 
 #Dump Json into file
 def dumpJsonToFile(jsonObj,fileName):
-	f = open(fileName, "w")
+	f = open(fileName, "a")
 	f.write(jsonObj)
 	f.close()
 
@@ -52,16 +52,75 @@ def createBd(app,tier,environment,tenant,vrf,gateway):
 
 	return bdJson
 
+#Create new EPG
+def createEPG(app,tier,environment,tenant):
+	epgName = environment + "-" + app + "-" + tier
+	bd = environment + "-" + app + "-" + tier
+
+	epgJson = {
+	  "totalCount": "1",
+	  "imdata": [
+	    {
+	      "fvAp": {
+	        "attributes": {
+	          "annotation": "",
+	          "descr": "",
+	          "dn": "uni/tn-" + tenant + "/ap-" + app + "",
+	          "name": "" + app + "",
+	          "nameAlias": "",
+	          "ownerKey": "",
+	          "ownerTag": "",
+	          "prio": "unspecified"
+	        },
+	        "children": [
+	          {
+	            "fvAEPg": {
+	              "attributes": {
+	                "annotation": "",
+	                "exceptionTag": "",
+	                "floodOnEncap": "disabled",
+	                "fwdCtrl": "",
+	                "hasMcastSource": "no",
+	                "isAttrBasedEPg": "no",
+	                "matchT": "AtleastOne",
+	                "name": "" + epgName + "",
+	                "nameAlias": "",
+	                "pcEnfPref": "unenforced",
+	                "prefGrMemb": "exclude",
+	                "prio": "unspecified",
+	                "shutdown": "no"
+	              },
+	              "children": [
+	                {
+	                  "fvRsCustQosPol": {
+	                    "attributes": {
+	                      "annotation": "",
+	                      "tnQosCustomPolName": ""
+	                    }
+	                  }
+	                },
+	                {
+	                  "fvRsBd": {
+	                    "attributes": {
+	                      "annotation": "",
+	                      "tnFvBDName": "" + bd + ""
+	                    }
+	                  }
+	                }
+	              ]
+	            }
+	          }
+	        ]
+	      }
+	    }
+	  ]
+	}
+
+	return epgJson
+
 #Login to APIC
 def getCredentialsJson():
-	login = {
-	  "aaaUser": {
-	    "attributes": {
-	      "name": "admin",
-	      "pwd": "ciscopsdt"
-	    }
-	  }
-	}
+	login = { "aaaUser" : { "attributes": {"name":"admin","pwd":"ciscopsdt" } } } 
 
 	return login
 
@@ -70,18 +129,10 @@ def pushJsonToApi():
 	login = getCredentialsJson()
 	login = convertPythonToJson(login)
 
-	url = "https://sandboxapicdc.cisco.com"
+	url = "https://sandboxapicdc.cisco.com/api/aaaLogin.json"
 	resp  = requests.post(url=url,json=login)
 
 	return resp
-
-#Create new EPG
-
-#Create new Contracts, Subjects and Filters
-
-#Associate Contract with Consumer
-
-#Associate Contract with Provider
 
 #main body
 
@@ -94,8 +145,6 @@ appsR = 1
 
 #Define number of rows in logs
 numAppsRows = appsSheet.nrows
-
-#create apps
 
 #Define variables
 app = appsSheet.cell(1,0)
@@ -113,15 +162,30 @@ gateway = formatText(gateway)
 tenant = formatText(tenant)
 vrf = formatText(vrf)
 
-#Test function
-bdJson = createBd(app,tier,environment,tenant,vrf,gateway)
+#create bds
+while appsR != numAppsRows:
 
-#pretty printing and convert from Python Dict into JSON
-bdJson = convertPythonToJson(bdJson)
+	#Create BD
+	bdJson = createBd(app,tier,environment,tenant,vrf,gateway)
 
-#dump Json into file
-fileName = "bd.json"
-dumpJsonToFile(bdJson,fileName)
+	#pretty printing and convert from Python Dict into JSON
+	bdJson = convertPythonToJson(bdJson)
+
+	#dump Json into file
+	fileName = "bd.json"
+	dumpJsonToFile(bdJson,fileName)
+
+	appsR = appsR + 1
+
+#Create new EPG
+
+#Associate VMM Domain with EPG
+
+#Create new Contracts, Subjects and Filters
+
+#Associate Contract with Consumer
+
+#Associate Contract with Provider
 
 #resp = pushJsonToApi()
 #print(resp.status_code)
