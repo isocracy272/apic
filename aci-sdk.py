@@ -53,7 +53,7 @@ def createBd(app,tier,environment,tenant,vrf,gateway):
 	return bdJson
 
 #Create new EPG
-def createEPG(app,tier,environment,tenant):
+def createEPG(app,tier,environment,tenant,vmm1,vmm2):
 	epgName = environment + "-" + app + "-" + tier
 	bd = environment + "-" + app + "-" + tier
 
@@ -106,7 +106,27 @@ def createEPG(app,tier,environment,tenant):
 	                      "tnFvBDName": "" + bd + ""
 	                    }
 	                  }
-	                }
+	                },
+	                {
+					  "fvRsDomAtt": {
+					    "attributes": {
+					      "resImedcy": "immediate",
+					      "tDn":"uni/vmm-" + vmm1 + "",
+					      "status":"created"
+					    },
+					  "children":[]
+					  }
+					},
+					{
+					  "fvRsDomAtt": {
+					    "attributes": {
+					      "resImedcy": "immediate",
+					      "tDn":"uni/vmm-" + vmm2 + "}",
+					      "status":"created"
+					    },
+					  "children":[]
+					  }
+					}
 	              ]
 	            }
 	          }
@@ -146,24 +166,24 @@ appsR = 1
 #Define number of rows in logs
 numAppsRows = appsSheet.nrows
 
-#Define variables
-app = appsSheet.cell(1,0)
-tier = appsSheet.cell(1,1)
-environment = appsSheet.cell(1,2)
-gateway = appsSheet.cell(1,3)
-tenant = appsSheet.cell(1,4)
-vrf = appsSheet.cell(1,5)
-
-#format app vars
-app = formatText(app)
-tier = formatText(tier)
-environment = formatText(environment)
-gateway = formatText(gateway)
-tenant = formatText(tenant)
-vrf = formatText(vrf)
-
 #create bds
 while appsR != numAppsRows:
+
+	#Define variables
+	app = appsSheet.cell(appsR,0)
+	tier = appsSheet.cell(appsR,1)
+	environment = appsSheet.cell(appsR,2)
+	gateway = appsSheet.cell(appsR,3)
+	tenant = appsSheet.cell(appsR,4)
+	vrf = appsSheet.cell(appsR,5)
+
+	#format app vars
+	app = formatText(app)
+	tier = formatText(tier)
+	environment = formatText(environment)
+	gateway = formatText(gateway)
+	tenant = formatText(tenant)
+	vrf = formatText(vrf)
 
 	#Create BD
 	bdJson = createBd(app,tier,environment,tenant,vrf,gateway)
@@ -177,7 +197,44 @@ while appsR != numAppsRows:
 
 	appsR = appsR + 1
 
+#start back at the top of apps
+appsR = 1
+
 #Create new EPG
+
+while appsR != numAppsRows:
+
+	#Define variables
+	app = appsSheet.cell(appsR,0)
+	tier = appsSheet.cell(appsR,1)
+	environment = appsSheet.cell(appsR,2)
+	gateway = appsSheet.cell(appsR,3)
+	tenant = appsSheet.cell(appsR,4)
+	vrf = appsSheet.cell(appsR,5)
+	vmm1 = appsSheet.cell(appsR,6)
+	vmm2 = appsSheet.cell(appsR,7)
+
+	#format app vars
+	app = formatText(app)
+	tier = formatText(tier)
+	environment = formatText(environment)
+	gateway = formatText(gateway)
+	tenant = formatText(tenant)
+	vrf = formatText(vrf)
+	vmm1 = formatText(vmm1)
+	vmm2 = formatText(vmm2)
+	
+	#Create App Profile and EPG
+	epgJson = createEPG(app,tier,environment,tenant,vmm1,vmm2)
+
+	#pretty printing and convert from Python Dict into JSON
+	epgJson = convertPythonToJson(epgJson)
+
+	#dump Json into file
+	fileName = "epg.json"
+	dumpJsonToFile(epgJson,fileName)
+
+	appsR = appsR + 1
 
 #Associate VMM Domain with EPG
 
